@@ -1,5 +1,8 @@
-﻿using CRUDExample.Filters.ActionFilters;
+﻿using ContactsManager.Core.Domain.Entities.IdentityEntities;
+using CRUDExample.Filters.ActionFilters;
 using Enities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RepositoriesImplementation;
 using RepositoryContracts.interfaces;
@@ -17,14 +20,11 @@ namespace CRUDExample
 			//adds controllers and views as services
 			services.AddControllersWithViews(options =>
 			{
-				//Adding Global Filters
-
-				//options.Filters.Add<ResponseHeaderActionFilter>(); // no parameters (onlu order)
 
 				var logger = services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>(); //to build the required services
 																																//GetService return null
-																																//GetRequiredService throw exception, but if need for sure it is bettter ofc
-
+																																	//GetRequiredService throw exception, but if need for sure it is bettter ofc
+			
 
 				options.Filters.Add(new ResponseHeaderActionFilter(logger, "My-Key-From-Global", "My-Value-From-Global", 0));  //With Parameters )
 
@@ -58,6 +58,20 @@ namespace CRUDExample
 				options.UseSqlServer(configuration.GetConnectionString("PersonDb")); //явное укаазание тспользоание типа бд
 																			 //and a LogLevel value that specifies the minimum log level at which messages should be sent.
 			});
+
+
+			//Enable Identity in this project
+			services.AddIdentity<ApplicationUser, ApplicationRole>() //applevel
+				.AddEntityFrameworkStores<ApplicationDbContext>() //type of db context
+				
+				.AddDefaultTokenProviders()// to generate otp   
+
+				.AddUserStore<UserStore				
+				< ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()//creation of repository level fordata access
+				
+				.AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid /*we have to mention it if it is changed*/>>();  //REPOSITORY LAYER FOR ROLE LAYER
+
+
 
 			return services;
 		} 
