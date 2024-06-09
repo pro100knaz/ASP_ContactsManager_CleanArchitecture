@@ -8,112 +8,116 @@ using Microsoft.Win32;
 
 namespace ContactsManager.UI.Controllers
 {
-    [Route("[controller]/[action]")]
-    [AllowAnonymous] //не важно авторизироваан или нет всё равно работает
-    public class AccountController : Controller
-    {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signManager;
+	[Route("[controller]/[action]")]
+	[AllowAnonymous] //не важно авторизироваан или нет всё равно работает
+	public class AccountController : Controller
+	{
+		private readonly UserManager<ApplicationUser> userManager;
+		private readonly SignInManager<ApplicationUser> signManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signManager)
-        {
-            this.userManager = userManager;
-            this.signManager = signManager;
-        }
+		public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signManager)
+		{
+			this.userManager = userManager;
+			this.signManager = signManager;
+		}
 
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
+		[HttpGet]
+		public IActionResult Register()
+		{
+			return View();
+		}
 
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterDTO register)
-        {
-            //Check For Validation errors
-            if (ModelState.IsValid == false)
-            {
-                ViewBag.Errors = ModelState.Values.SelectMany(temp => temp.Errors).Select(temp => temp.ErrorMessage);
-                return View(register);
-            }
+		[HttpPost]
+		public async Task<IActionResult> Register(RegisterDTO register)
+		{
+			//Check For Validation errors
+			if (ModelState.IsValid == false)
+			{
+				ViewBag.Errors = ModelState.Values.SelectMany(temp => temp.Errors).Select(temp => temp.ErrorMessage);
+				return View(register);
+			}
 
-            ApplicationUser user = new ApplicationUser
-            {
-                Email = register.Email,
-                UserName = register.Email, //for login
-                PhoneNumber = register.PhoneNumber,
-                PersonName = register.PersonName,
-            };
+			ApplicationUser user = new ApplicationUser
+			{
+				Email = register.Email,
+				UserName = register.Email, //for login
+				PhoneNumber = register.PhoneNumber,
+				PersonName = register.PersonName,
+			};
 
-            IdentityResult result = await userManager.CreateAsync(user, register.Password); //status of db operation
+			IdentityResult result = await userManager.CreateAsync(user, register.Password); //status of db operation
 
-            if (result.Succeeded)
-            {
+			if (result.Succeeded)
+			{
 
-                await signManager.SignInAsync(user, isPersistent: false);
-                //создает куки и отправляет их в виде ответа браузера
-                //persisten означает что куки будут сохраннены даже после закрытия браузер
-                //иначе удаляются автоматически
-
-
-
-
-                return RedirectToAction(nameof(PersonsController.Index), "Persons");
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("Register", error.Description); //name of padge and error
-                }
-            }
-
-            return View(register);
-
-        }
-
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
+				await signManager.SignInAsync(user, isPersistent: false);
+				//создает куки и отправляет их в виде ответа браузера
+				//persisten означает что куки будут сохраннены даже после закрытия браузер
+				//иначе удаляются автоматически
 
 
 
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginDTO loginDTO)
-        {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Errors = ModelState.Values.SelectMany(temp => temp.Errors).Select(temp => temp.ErrorMessage);
-                return View(loginDTO);
-            }
+
+				return RedirectToAction(nameof(PersonsController.Index), "Persons");
+			}
+			else
+			{
+				foreach (var error in result.Errors)
+				{
+					ModelState.AddModelError("Register", error.Description); //name of padge and error
+				}
+			}
+
+			return View(register);
+
+		}
+
+		[HttpGet]
+		public IActionResult Login()
+		{
+			return View();
+		}
 
 
-            var result = await signManager.PasswordSignInAsync(
-                loginDTO.Email,
-                loginDTO.Password,
-                isPersistent: true, lockoutOnFailure: false); //lockoutOnFailure for a while after 3 attempts prohibit to log in
-            //1 if they exsist and suit then accse will be true
+
+		[HttpPost]
+		public async Task<IActionResult> Login(LoginDTO loginDTO, string? ReturnValue)
+		{
+			if (!ModelState.IsValid)
+			{
+				ViewBag.Errors = ModelState.Values.SelectMany(temp => temp.Errors).Select(temp => temp.ErrorMessage);
+				return View(loginDTO);
+			}
 
 
-            if (result.Succeeded)
-            {
-                return RedirectToAction(nameof(PersonsController.Index), "Persons");
-            }
-            ModelState.AddModelError("Login", "Invalid user data : email or password"); //name of padge and error
-
-            return View(loginDTO);
-        }
+			var result = await signManager.PasswordSignInAsync(
+				loginDTO.Email,
+				loginDTO.Password,
+				isPersistent: true, lockoutOnFailure: false); //lockoutOnFailure for a while after 3 attempts prohibit to log in
+															  //1 if they exsist and suit then accse will be true
 
 
-        [HttpGet]
-        public async Task< IActionResult> Logout()
-        {
-             await signManager.SignOutAsync();
+			if (result.Succeeded)
+			{
+				if (string.IsNullOrEmpty(ReturnValue) && Url.IsLocalUrl(ReturnValue))
+				{
+					return LocalRedirect(ReturnValue);
+				}
+				return RedirectToAction(nameof(PersonsController.Index), "Persons");
+			}
+			ModelState.AddModelError("Login", "Invalid user data : email or password"); //name of padge and error
 
-            return RedirectToAction(nameof(PersonsController.Index), "Persons");
-        }
+			return View(loginDTO);
+		}
 
-    }
+
+		[HttpGet]
+		public async Task<IActionResult> Logout()
+		{
+			await signManager.SignOutAsync();
+
+			return RedirectToAction(nameof(PersonsController.Index), "Persons");
+		}
+
+	}
 }
