@@ -61,7 +61,21 @@ namespace CRUDExample
 
 
 			//Enable Identity in this project
-			services.AddIdentity<ApplicationUser, ApplicationRole>() //applevel
+			services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+			{
+				//to get opportunity to test easiesr
+				options.Password.RequireDigit = false;
+				options.Password.RequireLowercase = false;
+				options.Password.RequireUppercase = false;
+				options.Password.RequiredLength = 5;
+				options.Password.RequireNonAlphanumeric = false;
+				options.Password.RequiredUniqueChars = 5; //must be at least 5 unic characters 
+				
+				
+				
+				;
+			
+			}) //applevel
 				.AddEntityFrameworkStores<ApplicationDbContext>() //type of db context
 				
 				.AddDefaultTokenProviders()// to generate otp   
