@@ -1,6 +1,8 @@
 ﻿using ContactsManager.Core.Domain.Entities.IdentityEntities;
+using ContactsManager.UI.Controllers;
 using CRUDExample.Filters.ActionFilters;
 using Enities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +61,6 @@ namespace CRUDExample
 																			 //and a LogLevel value that specifies the minimum log level at which messages should be sent.
 			});
 
-
 			//Enable Identity in this project
 			services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 			{
@@ -70,9 +71,6 @@ namespace CRUDExample
 				options.Password.RequiredLength = 5;
 				options.Password.RequireNonAlphanumeric = false;
 				options.Password.RequiredUniqueChars = 5; //must be at least 5 unic characters 
-				
-				
-				
 				;
 			
 			}) //applevel
@@ -85,6 +83,20 @@ namespace CRUDExample
 				
 				.AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid /*we have to mention it if it is changed*/>>();  //REPOSITORY LAYER FOR ROLE LAYER
 
+			//after db and identity
+			services.AddAuthorization(options =>
+			{
+				options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+				// to get any information a person should have any ccokies
+				//минус в том что фильтр пременяется для контроллеров и их методов(не илучший подход) 
+				//с помощью аттрибуда allowAnonimus этого можно избежать
+			});
+
+
+			services.ConfigureApplicationCookie(options =>
+			{
+				options.LoginPath = "/Account/Login";  //перенаправление пользоователя в случае отсутсвии необходимых cookie файлов т.е если полльзователь не авторизованн
+			});
 
 
 			return services;

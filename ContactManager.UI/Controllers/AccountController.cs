@@ -1,6 +1,7 @@
 ﻿using ContactsManager.Core.Domain.Entities.IdentityEntities;
 using ContactsManager.Core.DTO;
 using CRUDExample.Controllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
@@ -8,6 +9,7 @@ using Microsoft.Win32;
 namespace ContactsManager.UI.Controllers
 {
     [Route("[controller]/[action]")]
+    [AllowAnonymous] //не важно авторизироваан или нет всё равно работает
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
