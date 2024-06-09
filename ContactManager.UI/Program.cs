@@ -21,7 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 //Serilog
-builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
+builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => 
+{
 
 	loggerConfiguration
 	.ReadFrom.Configuration(context.Configuration) //read configuration settings from built-in IConfiguration
@@ -47,6 +48,8 @@ else
 
 
 app.UseSerilogRequestLogging();
+
+
 app.UseHttpLogging();
 
 
@@ -57,10 +60,18 @@ if (!builder.Environment.IsEnvironment("Test"))
 
 }
 
-app.UseStaticFiles();
-app.UseRouting();
-app.MapControllers();
+app.UseStaticFiles  ();
 
+//middleware have to have exactly strict order !!! vise vereca it wont't work
+
+app.UseAuthentication();//при создании запроса и если уже авторизирован то куки более не будут сохраняться в памяти
+//если куки уже есть то ничего иначе оно отправит необходимые данные
+//может читать данные куки и извлекать из куки необходимые ему данные типа имени , эмайла все те даннные что присуутствуют в куки
+
+app.UseRouting();//identification action mrthod based route
+
+
+app.MapControllers(); // Execute filters pipline (action  + filter)
 
 
 app.Run();

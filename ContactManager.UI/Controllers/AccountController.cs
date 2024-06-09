@@ -10,10 +10,12 @@ namespace ContactsManager.UI.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signManager)
         {
             this.userManager = userManager;
+            this.signManager = signManager;
         }
 
         [HttpGet]
@@ -44,6 +46,15 @@ namespace ContactsManager.UI.Controllers
 
             if (result.Succeeded)
             {
+
+                await signManager.SignInAsync(user, isPersistent: false); 
+                //создает куки и отправляет их в виде ответа браузера
+                //persisten означает что куки будут сохраннены даже после закрытия браузер
+                //иначе удаляются автоматически
+
+
+
+                
                 return RedirectToAction(nameof(PersonsController.Index), "Persons");
             }
             else
