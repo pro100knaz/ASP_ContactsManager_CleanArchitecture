@@ -74,6 +74,18 @@ app.UseAuthorization();//validate user has permisssion to get resources or not
 
 app.MapControllers(); // Execute filters pipline (action  + filter)
 
+app.MapControllerRoute(name: "default",
+		pattern: "{controller}/{action}");
+
+//app.UseEndpoints(endpoints =>
+//{
+//	endpoints.MapControllerRoute(
+//		name: "default",
+//		pattern: "{controller}/{action}"
+//		);
+//});
+
+
 
 app.Run();
 
