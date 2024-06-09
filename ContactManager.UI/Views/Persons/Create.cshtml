@@ -1,0 +1,173 @@
+﻿@model PersonAddRequest
+
+@{
+	ViewBag.Title = "Create Person";
+}
+<div class="flex">
+	<div class="flex-1">
+		<span class="text-grey"> Contacts</span>
+		<i class="fa-solid fa-caret-right"></i>
+		<span class="text-grey"> Persons</span>
+		<i class="fa-solid fa-caret-right"></i>
+		<span class="text-grey"> Create</span>
+	</div>
+</div>
+
+
+
+<div class="form-container">
+
+	<a asp-action="index" asp-controller="persons" class="link-hover"> Back To Persons List </a>
+
+	<h2 class="text-large">Create Person</h2>
+
+	<form asp-action="create" asp-controller="persons" method="post">
+		<div class="container">
+			@*PersonName*@
+			<div class="form-field flex">
+				<div class="w-25">
+					<label asp-for="PersonName" class="form-label">Person Name</label>
+				</div>
+
+				<div class="flex-1">
+					<input asp-for="PersonName" class="form-input" /> @*Asp-for и валидация и привязка данных автоматически*@
+					<span asp-validation-for="PersonName" class="text-red"></span>
+				</div>
+			</div>
+
+			@*Email*@
+
+			<div class="form-field flex">
+				<div class="w-25">
+					<label asp-for="Email" class="form-label">Email</label>
+				</div>
+
+				<div class="flex-1">
+					<input asp-for="Email" class="form-input" /> @*type="email"  OR Указать атрибут нужно типо прямо в модели (нужно для валидациии т.к. по дефолту это текст)*@
+					<span asp-validation-for="Email" class="text-red"></span>
+				</div>
+			</div>
+
+			@*Sawddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddnt*@
+
+			<div class="form-field flex">
+				<div class="w-25">
+					<label asp-for="DateOfBirth" class="form-label">Date Of Birth</label>
+				</div>
+
+				<div class="flex-1">
+					<input asp-for="DateOfBirth" type="date" class="form-input" /> @*Same as the Name of The Propery To maKE IT Little Bit More Convenient*@
+					<span asp-validation-for="DateOfBirth" class="text-red"></span>
+				</div>
+			</div>
+			@*Sawddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddnt*@
+
+
+
+
+			<div class="form-field flex">
+				<div class="w-25">
+					<label class="form-label">Gender</label>
+				</div>
+				<div class="flex-1">
+					@{
+						List<string> genders = Enum.GetNames(typeof(GenderOptions)).ToList();
+					}
+					@foreach (var gender in genders)
+					{
+						<input type="radio" asp-for="Gender" id="@gender" value="@gender" />
+						<label class="form-label" for="@gender">@gender</label>
+					}
+					<span asp-validation-for="Gender" class="text-red"></span>
+
+				</div>
+			</div>
+
+
+			@*Sawddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddnt*@
+
+			<div class="form-field flex">
+				<div class="w-25">
+					<label for="CountryId" class="form-label">Country</label>
+				</div>
+
+				<div class="flex-1">
+					<select asp-for="CountryId" class="form-input" asp-items="@ViewBag.Countries">
+						<option value="">PleASE Select a country!!!</option> @*For default value*@
+					</select>
+					<span asp-validation-for="CountryId" class="text-red"></span>
+
+				</div>
+			</div>
+
+
+			@*Address*@
+			<div class="form-field flex">
+				<div class="w-25">
+					<label asp-for="Address" class="form-label">Address</label>
+				</div>
+
+				<div class="flex-1">
+					<textarea asp-for="Address" class="form-input"></textarea> @*Same as the Name of The Propery To maKE IT Little Bit More Convenient*@
+
+					<span asp-validation-for="Address" class="text-red"></span>
+				</div>
+			</div>
+
+
+			@*Sawddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddnt*@
+
+			<div class="form-field flex">
+				<div class="w-25">
+				</div>
+				<div class="flex-1">
+					<input type="checkbox" asp-for="ReceiveNewsLatters" />
+					<label asp-for="ReceiveNewsLatters" class="form-label">Receive News Latters</label> @*for нужен чтобы при начатии на текст выбиралась и выбранно или нет корочу вы поняли*@
+					<span asp-validation-for="ReceiveNewsLatters" class="text-red"></span>
+				</div>
+			</div>
+			@*Sawddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddnt*@
+			<div class="form-field flex">
+				<div class="w-25">
+				</div>
+				<div class="flex-1">
+					<button class="button button-green-back">Create</button>
+					<div asp-validation-summary="All"></div>
+
+					@if (ViewBag.Errors is not null)
+					{
+						<div class="text-red ml">
+							<ul>
+								@foreach (string error in ViewBag.Errors)
+								{
+									<li class="ml">@error</li>
+								}
+							</ul>
+						</div>
+					}
+				</div>
+			</div>
+			@*Sawddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddnt*@
+
+		</div>
+		<button>Submit</button>
+	</form>
+</div>
+ 
+
+@section scripts 
+{
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+			crossorigin="anonymous" asp-fallback-test="window.jQuery" asp-fallback-src="~/jquery.min" referrerpolicy="no-referrer"></script>
+
+	<script asp-fallback-src="~/jquery.validate.min"
+			asp-fallback-test="window.jQuery.validator"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
+
+	<script asp-fallback-src="~/jquery.validate.unobtrusive.min"
+			asp-fallback-test="window.jQuery.validator.unobstrusive"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
+}
+
